@@ -11,7 +11,7 @@ export class OmniVisionEngine {
         this.targets = [
             { id: 1, label: "Autonomous Vehicle", baseConf: 0.94, color: "#10b981", x: 60, y: 70, w: 140, h: 90, vx: 0.8, vy: 0 },
             { id: 2, label: "Pedestrian", baseConf: 0.91, color: "#06b6d4", x: 260, y: 50, w: 55, h: 120, vx: -0.4, vy: 0.2 },
-            { id: 3, label: "Delivery Drone", baseConf: 0.88, color: "#8b5cf6", x: 380, y: 30, w: 85, h: 55, vx: 0.5, vy: -0.3 },
+            { id: 3, label: "Delivery Drone", baseConf: 0.88, color: "#EA580C", x: 380, y: 30, w: 85, h: 55, vx: 0.5, vy: -0.3 },
             { id: 4, label: "Traffic Signal", baseConf: 0.96, color: "#f59e0b", x: 490, y: 20, w: 40, h: 110, vx: 0, vy: 0 },
             { id: 5, label: "Cyclist", baseConf: 0.62, color: "#f43f5e", x: 180, y: 95, w: 60, h: 80, vx: 0.6, vy: 0.1 }
         ];

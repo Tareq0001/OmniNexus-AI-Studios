@@ -4,7 +4,7 @@
 export class AgentCraftEngine {
     constructor() {
         this.agents = [
-            { id: "planner", name: "Architect & Planner", role: "Goal Decomposition & DAG Dispatch", avatar: "🏛️", status: "IDLE", color: "#6366f1" },
+            { id: "planner", name: "Architect & Planner", role: "Goal Decomposition & DAG Dispatch", avatar: "🏛️", status: "IDLE", color: "#F59E0B" },
             { id: "researcher", name: "Knowledge & RAG Specialist", role: "Vector DB & Schema Sourcing", avatar: "🔍", status: "IDLE", color: "#06b6d4" },
             { id: "coder", name: "Systems & Python Coder", role: "High-Performance Implementation", avatar: "💻", status: "IDLE", color: "#10b981" },
             { id: "critic", name: "Evaluator & Safety Critic", role: "Formal Verification & Unit Tests", avatar: "⚖️", status: "IDLE", color: "#f59e0b" }

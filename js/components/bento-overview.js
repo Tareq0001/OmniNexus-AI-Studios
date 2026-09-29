@@ -176,7 +176,7 @@ export class BentoOverview {
                 ctx.clearRect(0, 0, w, h);
 
                 const nodes = [
-                    { x: w * 0.15, y: h * 0.5, color: "#818cf8", label: "Planner" },
+                    { x: w * 0.15, y: h * 0.5, color: "#FBBF24", label: "Planner" },
                     { x: w * 0.45, y: h * 0.22, color: "#22d3ee", label: "Researcher" },
                     { x: w * 0.45, y: h * 0.78, color: "#34d399", label: "Coder" },
                     { x: w * 0.75, y: h * 0.35, color: "#fbbf24", label: "Critic" },
@@ -247,7 +247,7 @@ export class BentoOverview {
                 for (let r = 0; r < rows; r++) {
                     for (let c = 0; c < cols; c++) {
                         const val = 0.5 + 0.5 * Math.sin(t * 1.2 + r * 0.6 + c * 0.8);
-                        const hue = 260 + val * 30;
+                        const hue = 30 + val * 30;
                         const sat = 70 + val * 30;
                         ctx.fillStyle = `hsla(${hue}, ${sat}%, ${50 + val * 20}%, ${val * 0.8 + 0.15})`;
                         const rx = startX + c * (cellSize + gap);
@@ -275,7 +275,7 @@ export class BentoOverview {
                 ctx.clearRect(0, 0, w, h);
                 const models = [
                     { name: "XGB", score: 0.984, color: "#22d3ee" },
-                    { name: "LGBM", score: 0.971, color: "#818cf8" },
+                    { name: "LGBM", score: 0.971, color: "#FBBF24" },
                     { name: "RF", score: 0.956, color: "#34d399" },
                     { name: "SVM", score: 0.923, color: "#fbbf24" },
                     { name: "LR", score: 0.891, color: "#fb7185" }

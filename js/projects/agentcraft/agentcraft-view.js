@@ -113,7 +113,7 @@ export class AgentCraftView {
 
     _renderLogsHTML() {
         return this.engine.executionLogs.map(log => `
-            <div style="background: #030712; border-left: 3px solid #6366f1; border-radius: 6px; padding: 8px 12px; font-family: var(--font-mono); font-size: 11px;">
+            <div style="background: #030712; border-left: 3px solid #F59E0B; border-radius: 6px; padding: 8px 12px; font-family: var(--font-mono); font-size: 11px;">
                 <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 4px;">
                     <span><strong>${log.role}</strong> [${log.type}]</span>
                     <span>${log.time}</span>
@@ -208,7 +208,7 @@ export class AgentCraftView {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const w = canvas.width, h = canvas.height;
 
-            const nPlanner = { x: w * 0.16, y: h * 0.5, color: "#6366f1", label: "Planner" };
+            const nPlanner = { x: w * 0.16, y: h * 0.5, color: "#F59E0B", label: "Planner" };
             const nResearcher = { x: w * 0.5, y: h * 0.28, color: "#06b6d4", label: "Researcher" };
             const nCoder = { x: w * 0.5, y: h * 0.72, color: "#10b981", label: "Coder" };
             const nCritic = { x: w * 0.84, y: h * 0.5, color: "#f59e0b", label: "Critic" };

@@ -2,31 +2,31 @@
  * OmniNexus AI Studios - Master Application Orchestrator
  */
 
-import { SynthAudio } from "./audio/synth-audio.js?v=4.0.0";
-import { I18nManager } from "./i18n/translations.js?v=4.0.0";
-import { NavHeader } from "./components/nav-header.js?v=4.0.0";
-import { BentoOverview } from "./components/bento-overview.js?v=4.0.0";
-import { CommandPalette } from "./components/command-palette.js?v=4.0.0";
+import { SynthAudio } from "./audio/synth-audio.js?v=5.0.0";
+import { I18nManager } from "./i18n/translations.js?v=5.0.0";
+import { NavHeader } from "./components/nav-header.js?v=5.0.0";
+import { BentoOverview } from "./components/bento-overview.js?v=5.0.0";
+import { CommandPalette } from "./components/command-palette.js?v=5.0.0";
 
 // Studio 1: AgentCraft
-import { AgentCraftEngine } from "./projects/agentcraft/agentcraft-engine.js?v=4.0.0";
-import { AgentCraftView } from "./projects/agentcraft/agentcraft-view.js?v=4.0.0";
+import { AgentCraftEngine } from "./projects/agentcraft/agentcraft-engine.js?v=5.0.0";
+import { AgentCraftView } from "./projects/agentcraft/agentcraft-view.js?v=5.0.0";
 
 // Studio 2: NeuraForge
-import { NeuraForgeEngine } from "./projects/neuraforge/neuraforge-engine.js?v=4.0.0";
-import { NeuraForgeView } from "./projects/neuraforge/neuraforge-view.js?v=4.0.0";
+import { NeuraForgeEngine } from "./projects/neuraforge/neuraforge-engine.js?v=5.0.0";
+import { NeuraForgeView } from "./projects/neuraforge/neuraforge-view.js?v=5.0.0";
 
 // Studio 3: PulseML
-import { PulseMLEngine } from "./projects/pulseml/pulseml-engine.js?v=4.0.0";
-import { PulseMLView } from "./projects/pulseml/pulseml-view.js?v=4.0.0";
+import { PulseMLEngine } from "./projects/pulseml/pulseml-engine.js?v=5.0.0";
+import { PulseMLView } from "./projects/pulseml/pulseml-view.js?v=5.0.0";
 
 // Studio 4: OmniVision
-import { OmniVisionEngine } from "./projects/omnivision/omnivision-engine.js?v=4.0.0";
-import { OmniVisionView } from "./projects/omnivision/omnivision-view.js?v=4.0.0";
+import { OmniVisionEngine } from "./projects/omnivision/omnivision-engine.js?v=5.0.0";
+import { OmniVisionView } from "./projects/omnivision/omnivision-view.js?v=5.0.0";
 
 // Studio 5: CyberRadar
-import { CyberRadarEngine } from "./projects/cyberradar/cyberradar-engine.js?v=4.0.0";
-import { CyberRadarView } from "./projects/cyberradar/cyberradar-view.js?v=4.0.0";
+import { CyberRadarEngine } from "./projects/cyberradar/cyberradar-engine.js?v=5.0.0";
+import { CyberRadarView } from "./projects/cyberradar/cyberradar-view.js?v=5.0.0";
 
 class OmniNexusApp {
     constructor() {
