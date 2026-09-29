@@ -233,6 +233,7 @@ html[dir="rtl"] body {
     transition: all var(--transition-fast);
     border-radius: var(--radius-md);
     margin-bottom: 8px;
+    white-space: nowrap;
 }
 
 .nav-tab-item:hover {
