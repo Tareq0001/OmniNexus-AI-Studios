@@ -166,118 +166,271 @@ export class BentoOverview {
     startMiniCanvases() {
         let t = 0;
         const draw = () => {
-            t += 0.03;
-            // 1. Swarm Canvas
+            t += 0.025;
+
+            // 1. Swarm Canvas — Glowing network with particle trails
             const cAgents = document.getElementById("bento-canvas-agents");
             if (cAgents) {
                 const ctx = cAgents.getContext("2d");
-                ctx.clearRect(0, 0, cAgents.width, cAgents.height);
                 const w = cAgents.width, h = cAgents.height;
+                ctx.clearRect(0, 0, w, h);
+
                 const nodes = [
-                    { x: w * 0.18, y: h * 0.5, color: "#6366f1", label: "Planner" },
-                    { x: w * 0.5, y: h * 0.28, color: "#06b6d4", label: "Researcher" },
-                    { x: w * 0.5, y: h * 0.72, color: "#10b981", label: "Coder" },
-                    { x: w * 0.82, y: h * 0.5, color: "#f59e0b", label: "Critic" }
+                    { x: w * 0.15, y: h * 0.5, color: "#818cf8", label: "Planner" },
+                    { x: w * 0.45, y: h * 0.22, color: "#22d3ee", label: "Researcher" },
+                    { x: w * 0.45, y: h * 0.78, color: "#34d399", label: "Coder" },
+                    { x: w * 0.75, y: h * 0.35, color: "#fbbf24", label: "Critic" },
+                    { x: w * 0.85, y: h * 0.7, color: "#fb7185", label: "Validator" }
                 ];
-                // Connections
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.12)";
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.moveTo(nodes[0].x, nodes[0].y); ctx.lineTo(nodes[1].x, nodes[1].y);
-                ctx.moveTo(nodes[0].x, nodes[0].y); ctx.lineTo(nodes[2].x, nodes[2].y);
-                ctx.moveTo(nodes[1].x, nodes[1].y); ctx.lineTo(nodes[3].x, nodes[3].y);
-                ctx.moveTo(nodes[2].x, nodes[2].y); ctx.lineTo(nodes[3].x, nodes[3].y);
-                ctx.stroke();
+                const edges = [[0,1],[0,2],[1,3],[2,3],[2,4],[3,4],[1,2]];
 
-                // Pulses
-                const pulse1 = (t * 0.6) % 1;
-                const p1x = nodes[0].x + (nodes[1].x - nodes[0].x) * pulse1;
-                const p1y = nodes[0].y + (nodes[1].y - nodes[0].y) * pulse1;
-                ctx.fillStyle = "#06b6d4";
-                ctx.beginPath(); ctx.arc(p1x, p1y, 4, 0, Math.PI * 2); ctx.fill();
+                // Gradient connections
+                edges.forEach(([a, b]) => {
+                    const grad = ctx.createLinearGradient(nodes[a].x, nodes[a].y, nodes[b].x, nodes[b].y);
+                    grad.addColorStop(0, nodes[a].color + "30");
+                    grad.addColorStop(1, nodes[b].color + "30");
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 1.2;
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[a].x, nodes[a].y);
+                    ctx.lineTo(nodes[b].x, nodes[b].y);
+                    ctx.stroke();
+                });
 
+                // Animated pulses along edges
+                edges.forEach(([a, b], i) => {
+                    const progress = ((t * 0.5 + i * 0.25) % 1);
+                    const px = nodes[a].x + (nodes[b].x - nodes[a].x) * progress;
+                    const py = nodes[a].y + (nodes[b].y - nodes[a].y) * progress;
+                    const glow = ctx.createRadialGradient(px, py, 0, px, py, 8);
+                    glow.addColorStop(0, nodes[b].color + "cc");
+                    glow.addColorStop(1, nodes[b].color + "00");
+                    ctx.fillStyle = glow;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Glowing nodes
                 nodes.forEach(n => {
+                    const glowR = 16 + Math.sin(t * 2) * 3;
+                    const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR);
+                    glow.addColorStop(0, n.color + "55");
+                    glow.addColorStop(1, n.color + "00");
+                    ctx.fillStyle = glow;
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
+                    ctx.fill();
+
                     ctx.fillStyle = n.color;
-                    ctx.beginPath(); ctx.arc(n.x, n.y, 8, 0, Math.PI * 2); ctx.fill();
-                    ctx.fillStyle = "#ffffff";
-                    ctx.font = "10px JetBrains Mono, monospace";
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = "#ffffffcc";
+                    ctx.font = "9px JetBrains Mono, monospace";
                     ctx.textAlign = "center";
                     ctx.fillText(n.label, n.x, n.y + 18);
                 });
             }
 
-            // 2. Attention Canvas
+            // 2. Attention Canvas — Smooth gradient heatmap
             const cAttn = document.getElementById("bento-canvas-attention");
             if (cAttn) {
                 const ctx = cAttn.getContext("2d");
-                ctx.clearRect(0, 0, cAttn.width, cAttn.height);
-                const size = 18;
-                const startX = 40, startY = 20;
-                for (let r = 0; r < 6; r++) {
-                    for (let c = 0; c < 6; c++) {
-                        const val = 0.5 + 0.5 * Math.sin(t + r * 0.5 + c * 0.7);
-                        ctx.fillStyle = `rgba(139, 92, 246, ${val * 0.85 + 0.1})`;
-                        ctx.fillRect(startX + c * (size + 4), startY + r * (size + 4), size, size);
+                const w = cAttn.width, h = cAttn.height;
+                ctx.clearRect(0, 0, w, h);
+                const cellSize = 20;
+                const gap = 3;
+                const cols = 8, rows = 6;
+                const startX = (w - cols * (cellSize + gap)) / 2;
+                const startY = (h - rows * (cellSize + gap)) / 2;
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        const val = 0.5 + 0.5 * Math.sin(t * 1.2 + r * 0.6 + c * 0.8);
+                        const hue = 260 + val * 30;
+                        const sat = 70 + val * 30;
+                        ctx.fillStyle = `hsla(${hue}, ${sat}%, ${50 + val * 20}%, ${val * 0.8 + 0.15})`;
+                        const rx = startX + c * (cellSize + gap);
+                        const ry = startY + r * (cellSize + gap);
+                        ctx.beginPath();
+                        ctx.roundRect(rx, ry, cellSize, cellSize, 3);
+                        ctx.fill();
                     }
                 }
+                // Labels
+                ctx.fillStyle = "#ffffff55";
+                ctx.font = "8px JetBrains Mono, monospace";
+                ctx.textAlign = "left";
+                const tokens = ["The", "model", "learns", "attention", "weights", "fast"];
+                tokens.forEach((tk, i) => {
+                    if (i < rows) ctx.fillText(tk, 4, startY + i * (cellSize + gap) + 14);
+                });
             }
 
-            // 4. Vision Canvas (Bounding boxes)
+            // 3. AutoML canvas (mini bar chart)
+            const cAutoML = document.getElementById("bento-canvas-automl");
+            if (cAutoML) {
+                const ctx = cAutoML.getContext("2d");
+                const w = cAutoML.width, h = cAutoML.height;
+                ctx.clearRect(0, 0, w, h);
+                const models = [
+                    { name: "XGB", score: 0.984, color: "#22d3ee" },
+                    { name: "LGBM", score: 0.971, color: "#818cf8" },
+                    { name: "RF", score: 0.956, color: "#34d399" },
+                    { name: "SVM", score: 0.923, color: "#fbbf24" },
+                    { name: "LR", score: 0.891, color: "#fb7185" }
+                ];
+                const barW = 36, gap2 = 16;
+                const totalW = models.length * (barW + gap2) - gap2;
+                const startX2 = (w - totalW) / 2;
+                const maxH = h * 0.65;
+                models.forEach((m, i) => {
+                    const animated = m.score * (0.85 + 0.15 * Math.sin(t + i));
+                    const barH = animated * maxH;
+                    const x = startX2 + i * (barW + gap2);
+                    const y = h - 24 - barH;
+                    const grad = ctx.createLinearGradient(x, y + barH, x, y);
+                    grad.addColorStop(0, m.color + "33");
+                    grad.addColorStop(1, m.color + "cc");
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
+                    ctx.fill();
+                    ctx.fillStyle = "#ffffff88";
+                    ctx.font = "9px JetBrains Mono, monospace";
+                    ctx.textAlign = "center";
+                    ctx.fillText(m.name, x + barW / 2, h - 10);
+                });
+            }
+
+            // 4. Vision Canvas — Enhanced bounding boxes with glow
             const cVision = document.getElementById("bento-canvas-vision");
             if (cVision) {
                 const ctx = cVision.getContext("2d");
-                ctx.clearRect(0, 0, cVision.width, cVision.height);
-                ctx.fillStyle = "#020409";
-                ctx.fillRect(0, 0, cVision.width, cVision.height);
+                const w = cVision.width, h = cVision.height;
+                ctx.clearRect(0, 0, w, h);
 
-                // Grid
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
-                for (let x = 0; x < cVision.width; x += 25) {
-                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, cVision.height); ctx.stroke();
+                // Subtle grid
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
+                ctx.lineWidth = 0.5;
+                for (let x = 0; x < w; x += 20) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+                }
+                for (let y2 = 0; y2 < h; y2 += 20) {
+                    ctx.beginPath(); ctx.moveTo(0, y2); ctx.lineTo(w, y2); ctx.stroke();
                 }
 
-                // Simulated vehicle
-                const vx = 40 + Math.sin(t) * 15;
-                ctx.strokeStyle = "#10b981";
-                ctx.lineWidth = 1.5;
-                ctx.strokeRect(vx, 45, 90, 60);
-                ctx.fillStyle = "#10b981";
-                ctx.font = "10px JetBrains Mono, monospace";
-                ctx.fillText("Drone 96%", vx + 4, 38);
+                const objects = [
+                    { x: 30 + Math.sin(t * 0.7) * 12, y: 40, w: 95, h: 65, label: "Drone", conf: 96, color: "#34d399" },
+                    { x: 175 + Math.cos(t * 0.5) * 8, y: 30, w: 50, h: 85, label: "Human", conf: 92, color: "#22d3ee" },
+                    { x: 245 + Math.sin(t * 0.4) * 6, y: 55, w: 45, h: 40, label: "Vehicle", conf: 88, color: "#fbbf24" }
+                ];
 
-                // Simulated pedestrian
-                const px = 180 + Math.cos(t * 0.8) * 10;
-                ctx.strokeStyle = "#06b6d4";
-                ctx.strokeRect(px, 35, 45, 80);
-                ctx.fillStyle = "#06b6d4";
-                ctx.fillText("Human 92%", px + 4, 28);
+                objects.forEach(obj => {
+                    // Glow
+                    ctx.shadowColor = obj.color;
+                    ctx.shadowBlur = 10;
+                    ctx.strokeStyle = obj.color;
+                    ctx.lineWidth = 1.5;
+                    ctx.strokeRect(obj.x, obj.y, obj.w, obj.h);
+                    ctx.shadowBlur = 0;
+
+                    // Corner brackets
+                    const corner = 8;
+                    ctx.lineWidth = 2.5;
+                    ctx.strokeStyle = obj.color;
+                    // Top-left
+                    ctx.beginPath(); ctx.moveTo(obj.x, obj.y + corner); ctx.lineTo(obj.x, obj.y); ctx.lineTo(obj.x + corner, obj.y); ctx.stroke();
+                    // Top-right
+                    ctx.beginPath(); ctx.moveTo(obj.x + obj.w - corner, obj.y); ctx.lineTo(obj.x + obj.w, obj.y); ctx.lineTo(obj.x + obj.w, obj.y + corner); ctx.stroke();
+                    // Bottom-left
+                    ctx.beginPath(); ctx.moveTo(obj.x, obj.y + obj.h - corner); ctx.lineTo(obj.x, obj.y + obj.h); ctx.lineTo(obj.x + corner, obj.y + obj.h); ctx.stroke();
+                    // Bottom-right
+                    ctx.beginPath(); ctx.moveTo(obj.x + obj.w - corner, obj.y + obj.h); ctx.lineTo(obj.x + obj.w, obj.y + obj.h); ctx.lineTo(obj.x + obj.w, obj.y + obj.h - corner); ctx.stroke();
+
+                    ctx.lineWidth = 1;
+                    // Label background
+                    ctx.fillStyle = obj.color + "22";
+                    ctx.fillRect(obj.x, obj.y - 16, 72, 14);
+                    ctx.fillStyle = obj.color;
+                    ctx.font = "bold 10px JetBrains Mono, monospace";
+                    ctx.textAlign = "left";
+                    ctx.fillText(`${obj.label} ${obj.conf}%`, obj.x + 3, obj.y - 5);
+                });
             }
 
-            // 5. Radar Canvas
+            // 5. Radar Canvas — Professional radar sweep with gradient cone
             const cRadar = document.getElementById("bento-canvas-radar");
             if (cRadar) {
                 const ctx = cRadar.getContext("2d");
-                ctx.clearRect(0, 0, cRadar.width, cRadar.height);
-                const cx = cRadar.width / 2, cy = cRadar.height / 2, radius = 65;
-                // Rings
-                ctx.strokeStyle = "rgba(244, 63, 94, 0.25)";
-                ctx.lineWidth = 1;
-                [0.3, 0.6, 1].forEach(frac => {
-                    ctx.beginPath(); ctx.arc(cx, cy, radius * frac, 0, Math.PI * 2); ctx.stroke();
+                const w = cRadar.width, h = cRadar.height;
+                ctx.clearRect(0, 0, w, h);
+                const cx = w / 2, cy = h / 2, radius = Math.min(w, h) * 0.38;
+
+                // Concentric rings
+                [0.25, 0.5, 0.75, 1].forEach(frac => {
+                    ctx.strokeStyle = `rgba(251, 113, 133, ${0.08 + frac * 0.08})`;
+                    ctx.lineWidth = 0.8;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, radius * frac, 0, Math.PI * 2);
+                    ctx.stroke();
                 });
+
+                // Crosshairs
+                ctx.strokeStyle = "rgba(251, 113, 133, 0.08)";
+                ctx.beginPath();
+                ctx.moveTo(cx - radius, cy); ctx.lineTo(cx + radius, cy);
+                ctx.moveTo(cx, cy - radius); ctx.lineTo(cx, cy + radius);
+                ctx.stroke();
+
+                // Sweep cone gradient
+                const angle = t * 1.2;
+                const sweepAngle = 0.5;
+                const grad = ctx.createConicGradient(angle - sweepAngle, cx, cy);
+                grad.addColorStop(0, "rgba(251, 113, 133, 0)");
+                grad.addColorStop(sweepAngle / (Math.PI * 2), "rgba(251, 113, 133, 0.18)");
+                grad.addColorStop(sweepAngle / Math.PI, "rgba(251, 113, 133, 0)");
+                grad.addColorStop(1, "rgba(251, 113, 133, 0)");
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                ctx.fill();
+
                 // Sweep line
-                const angle = t * 1.5;
-                ctx.strokeStyle = "rgba(244, 63, 94, 0.8)";
+                ctx.strokeStyle = "rgba(251, 113, 133, 0.9)";
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
                 ctx.moveTo(cx, cy);
                 ctx.lineTo(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius);
                 ctx.stroke();
 
-                // Target blip
-                ctx.fillStyle = "#fb7185";
+                // Threat blips with pulsing glow
+                const blips = [
+                    { a: 1.2, r: 0.6, size: 4 },
+                    { a: 3.5, r: 0.35, size: 3 },
+                    { a: 5.0, r: 0.82, size: 5 }
+                ];
+                blips.forEach(blip => {
+                    const bx = cx + Math.cos(blip.a) * radius * blip.r;
+                    const by = cy + Math.sin(blip.a) * radius * blip.r;
+                    const pulse = 1 + 0.3 * Math.sin(t * 3 + blip.a);
+                    const glow = ctx.createRadialGradient(bx, by, 0, bx, by, blip.size * pulse * 3);
+                    glow.addColorStop(0, "rgba(251, 113, 133, 0.6)");
+                    glow.addColorStop(1, "rgba(251, 113, 133, 0)");
+                    ctx.fillStyle = glow;
+                    ctx.beginPath();
+                    ctx.arc(bx, by, blip.size * pulse * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = "#fb7185";
+                    ctx.beginPath();
+                    ctx.arc(bx, by, blip.size * pulse, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Center dot
+                ctx.fillStyle = "#fb718566";
                 ctx.beginPath();
-                ctx.arc(cx + 30, cy - 25, 4, 0, Math.PI * 2);
+                ctx.arc(cx, cy, 3, 0, Math.PI * 2);
                 ctx.fill();
             }
 
